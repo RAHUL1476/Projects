@@ -1,0 +1,12 @@
+# depslib dependency file v1.0
+1633283980 source:e:\c\c projects\student management\main.cpp
+	<iostream>
+	<fstream>
+	<stdlib.h>
+	<cstdlib>
+	<conio.h>
+	<string>
+	<string_view>
+	<regex>
+	<stdio.h>
+
