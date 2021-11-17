@@ -1,266 +1,140 @@
-#include <iostream>
-#include <fstream>
-#include <stdlib.h>
-#include <cstdlib>
-#include <conio.h>
-#include <string>
-#include <string_view>
-#include <regex>
-#include <stdio.h>
+#include<iostream>
+#include<conio.h>
+#include<string.h>
 using namespace std;
-class student
-{
-private:
-    string name, roll_no, course, address, email_id, contact_no;
-
+class bank{
 public:
-    void menu();
-    void insert();
-    void display();
-    void modify();
-    void search();
-    void deleted();
+    char name[100],add[1000],type;
+    int age,balance=0;
+    void open_account(char* s);
+    void deposit_money();
+    void withdraw_money();
+    void display_account();
 };
-void student::menu()
-{
-menustart:
-    int choice;
-    char x;
-    system("cls");
-    cout << endl;
-    cout << "\t\t\t| STUDENT MANAGEMENT SYSTEM |" << endl;
-    cout << endl;
-    cout << "\t\t\t 1. Enter New Record" << endl;
-    cout << "\t\t\t 2. Display The Record" << endl;
-    cout << "\t\t\t 3. Modify The Record" << endl;
-    cout << "\t\t\t 4. Search The Record" << endl;
-    cout << "\t\t\t 5. Delete The Record" << endl;
-    cout << "\t\t\t 6. Exit" << endl;
-    cout << endl;
-    cout << "\t\t\tChoose Option:[1/2/3/4/5/6]" << endl;
-    cout << endl;
-    cout << "Enter Your Choose: ";
-    cin >> choice;
-    switch (choice)
-    {
-    case 1:
-        do
-        {
-            insert();
-            cout << "\n\t\t\t Add Another Student Record Press (Y,N): ";
-            cin >> x;
-        } while (x == 'y' || x == 'Y');
-        break;
-    case 2:
-        display();
-        break;
-    case 3:
-        modify();
-        break;
-    case 4:
-        search();
-        break;
-    case 5:
-        deleted();
-        break;
-    case 6:
-        exit(0);
-    default:
-        cout << "\n\t\t\t Invalid choice... Please Try Again..";
+void bank :: open_account(char* s){
+    strcpy(name,s);
+    cout<<"\n\t\t\tEnter your age : ";
+    cin>>age;
+    cout<<"\n\t\t\tEnter your address : ";
+    cin.ignore();
+    cin.getline(add,1000);
+    cout<<"\n\t\t\tEnter what type of account do you want savings(s) or current(c) : ";
+    cin>>type;
+    cout<<"\n\t\t\tEnter the amount for deposit : ";
+    cin>>balance;
+    cout<<"\n\t\t\t\tYour account is created"<<endl;
+}
+void bank :: deposit_money(){
+    int a;
+    cout<<"\n\n\t\t\tEnter the amount of money to deposit : ";
+    cin>>a;
+    balance+=a;
+    cout<<"\n\t\t\t\tAmount deposited successfully "<<endl<<endl<<"\n\t\t\t\tTotal balance amount you have : "<<balance<<endl;
+}
+void bank :: withdraw_money(){
+    int a;
+    cout<<"\n\n\t\t\tEnter the amount of money to withdraw : ";
+    cin>>a;
+    balance-=a;
+    cout<<"\n\t\t\t\tAmount withdrawn successfully "<<endl<<endl<<"\n\t\t\t\tTotal balance amount you have : "<<balance<<endl;
+}
+void bank :: display_account(){
+    cout<<"\n\n\t\t\tYour name : "<<name<<endl;
+    cout<<"\n\t\t\tYour age : "<<age<<endl;
+    cout<<"\n\t\t\tYour address : "<<add<<endl;
+    cout<<"\n\t\t\tYour account type : ";
+    if(type=='s' || type=='S')cout<<"Savings account "<<endl;
+    else if(type=='c'|| type=='C')cout<<"Current account"<<endl;
+    else{cout<<type<<endl;}
+    cout<<"\n\t\t\tYour deposited amount : "<<balance<<endl;
+}
+struct account{
+    char name[100];
+    bank ob;
+    struct account* next;
+};
+struct account* head;
+void create(){
+    char n[100];
+    cout<<"\n\t\t\tEnter your User name : ";
+    cin.ignore();
+    cin.getline(n,100);
+    account* temp2=head;
+    while(temp2){
+        if(strcmp(temp2->name,n)==0){
+            cout<<"\n\t\t\tThis username already exist, try with another name "<<endl;
+            return;
+        }
+        temp2=temp2->next;
     }
-    cout<<"\n\t\t\tPress any button to continue "<<endl;
-    getch();
-    goto menustart;
+    account* temp=new account();
+    strcpy(temp->name,n);
+    temp->ob.open_account(temp->name);
+    temp->next=head;
+    head=temp;
 }
-void student::insert()
-{
-    system("cls");
-    fstream file;
-    cout << "\n\t\t\tAdd Student Details" << endl;
-    cout << "\t\t\tEnter Name: ";
-    cin >> name;
-    cout << "\t\t\tEnter Roll No.: ";
-    cin >> roll_no;
-    cout << "\t\t\tEnter Course: ";
-    cin >> course;
-    cout << "\t\t\tEnter Email Id: ";
-    cin >> email_id;
-    cout << "\t\t\tEnter Contact No: ";
-    cin >> contact_no;
-    cout << "\t\t\tEnter Address: ";
-    cin >> address;
-    file.open("FileManagement.txt", ios::app | ios::out);
-    file << " " << name << " " << roll_no << " " << course << " " << email_id << " " << contact_no << " " << address << "\n";
-    file.close();
+void del(account* temp){
+    struct account* temp1=head;
+    if(temp==temp1){
+        head=head->next;
+        free(temp);
+        cout<<"\n\t\t\tAccount deleted successfully "<<endl;
+        return;
+    }
+    while(temp1->next!=temp){
+        temp1=temp1->next;
+    }
+    temp1->next=temp1->next->next;
+    free(temp);
+    cout<<"\n\t\t\tAccount deleted successfully "<<endl;
 }
+void findacc(int a){
+    char name[100];
+    cout<<"\n\t\t\tEnter your User name : ";
+    cin.ignore();
+    cin.getline(name,100);
+    account* temp=head;
+    while(temp){
+        if(strcmp(temp->name,name)==0){
+            switch(a){
+                case 2:temp->ob.deposit_money();break;
+                case 3:temp->ob.withdraw_money();break;
+                case 4:temp->ob.display_account();break;
+                case 5:del(temp);break;
+            }
+            return;
+        }
+        temp=temp->next;
+    }
+    cout<<"\n\t\t\tAccount doesn't exist"<<endl;
+}
+int main(){
+    head=NULL;
+    int op;
+    char ch;
+    menustart:
+        cout<<"\t\t\t\tWelcome to our bank "<<endl<<endl;
+        cout<<"\t\t\t1) Open new account "<<endl;
+        cout<<"\t\t\t2) Deposit money "<<endl;
+        cout<<"\t\t\t3) Withdraw money "<<endl;
+        cout<<"\t\t\t4) Display account "<<endl;
+        cout<<"\t\t\t5) Delete account "<<endl;
+        cout<<"\t\t\t6) Exit "<<endl<<endl;
+        cout<<"\t\t\tSelect any one option [1/2/3/4/5/6] : ";
+        cin>>op;
+        switch(op){
+            case 1:create();break;
+            case 2:findacc(2);break;
+            case 3:findacc(3);break;
+            case 4:findacc(4);break;
+            case 5:findacc(5);break;
+            case 6:exit(0);
+            default :cout<<"\n\t\t\tInvalid choice... Please Try Again.."<<endl;
+        }
+        cout<<"\n\t\t\t\tThank you for using our bank"<<endl<<endl;
+        cout<<"\n\t\t\t\tPress any button to continue "<<endl;
+        getch();
+        system("cls");
+        goto menustart;
 
-void student::display()
-{
-    system("cls");
-    fstream file;
-    int total = 0;
-    cout << "\n\t\t\tStudent Record Table" << endl;
-    file.open("FileManagement.txt", ios::in);
-    if(!file)
-    {
-        cout << "\n\t\t\t FILE NOT FOUND..."<<endl;
-        file.close();
-    }
-    else
-    {
-        file >> name >> roll_no >> course >> email_id >> contact_no >> address;
-        while (!file.eof())
-        {
-            cout << "\n\n\t\t\t Student No.: " << total++ << endl;
-            cout << "\t\t\t Student Name: " << name << endl;
-            cout << "\t\t\t Student Roll No.: " << roll_no << endl;
-            cout << "\t\t\t Student course: " << course << endl;
-            cout << "\t\t\t Student Email Id.: " << email_id << endl;
-            cout << "\t\t\t Student Contact No.: " << contact_no << endl;
-            cout << "\t\t\t Student Address: " << address << endl;
-            file >> name >> roll_no >> course >> email_id >> contact_no >> address;
-        }
-    }
-    if (total == 0)
-    {
-        cout << "\n\t\t\tNo Data Is Present..."<<endl;
-    }
-    file.close();
-}
-void student::modify()
-{
-    system("cls");
-    fstream file, file1;
-    string rollno;
-    int found = 0;
-    cout << "\n\t\t\tStudent Modify Details" << endl;
-    file.open("FileManagement.txt", ios::in);
-    if (!file)
-    {
-        cout << "\n\t\t\tNo Data is Present..";
-    }
-    else
-    {
-        cout << "\nEnter Roll No. of Student which you want to Modify: ";
-        cin >> rollno;
-        file1.open("record.txt", ios::app | ios::out);
-        file >> name >> roll_no >> course >> email_id >> contact_no >> address;
-        while (!file.eof())
-        {
-            if (rollno != roll_no)
-
-                file1 << " " << name << " " << roll_no << " " << course << " " << email_id << " " << contact_no << " " << address << "\n";
-            else
-            {
-                cout << "\n\t\t\tEnter Name: ";
-                cin >> name;
-                cout << "\t\t\tEnter Roll No.: ";
-                cin >> roll_no;
-                cout << "\t\t\tEnter Course: ";
-                cin >> course;
-                cout << "\t\t\tEnter Email Id: ";
-                cin >> email_id;
-                cout << "\t\t\tEnter Contact No.: ";
-                cin >> contact_no;
-                cout << "\t\t\tEnter Address: ";
-                cin >> address;
-                file1 << " " << name << " " << roll_no << " " << course << " " << email_id << " " << contact_no << " " << address << "\n";
-                found++;
-            }
-            file >> name >> roll_no >> course >> email_id >> contact_no >> address;
-        }
-        if (found == 0)
-        {
-            cout << "\n\n\t\t\t Student Roll No. Not Found...."<<endl;
-        }
-        file1.close();
-        file.close();
-        remove("FileManagement.txt");
-        rename("record.txt", "FileManagement.txt");
-    }
-}
-void student::search()
-{
-    system("cls");
-    fstream file;
-    int found = 0;
-    cout << "\n\t\t\tStudent Search Data" << endl;
-    file.open("FileManagement.txt", ios::in);
-    if (!file)
-    {
-        cout << "\n\t\t\t No Data Is Present...";
-    }
-    else
-    {
-        string rollno;
-        cout << "\n Enter Roll No. of Student Which You Want to Search: ";
-        cin >> rollno;
-        file >> name >> roll_no >> course >> email_id >> contact_no >> address;
-        while (!file.eof())
-        {
-            if (rollno == roll_no)
-            {
-                cout << "\n\t\t\t Student Name: " << name << endl;
-                cout << "\t\t\t Student Roll No.: " << roll_no << endl;
-                cout << "\t\t\t Student course: " << course << endl;
-                cout << "\t\t\t Student Email Id.: " << email_id << endl;
-                cout << "\t\t\t Student Address: " << address << endl;
-                found++;
-            }
-            file >> name >> roll_no >> course >> email_id >> contact_no >> address;
-        }
-        if (found == 0)
-        {
-            cout << "\n\t\t\tStudent Roll No. Not Found..."<<endl;
-        }
-        file.close();
-    }
-}
-void student::deleted()
-{
-    system("cls");
-    fstream file, file1;
-    int found = 0;
-    string roll;
-    cout << "\n\t\t\tDelete Student Details"<< endl;
-    file.open("FileManagement.txt", ios::in);
-    if (!file)
-    {
-        cout << "\n\t\t\tNo Data is Present..";
-        file.close();
-    }
-    else
-    {
-        cout << "\nEnter Roll No. of Student which you want Delete Data: ";
-        cin >> roll;
-        file1.open("record.txt", ios::app | ios::out);
-        file >> name >> roll_no >> course >> email_id >> contact_no >> address;
-        while (!file.eof())
-        {
-            if (roll != roll_no)
-            {
-                file1 << " " << name << " " << roll_no << " " << course << " " << email_id << " " << contact_no << " " << address << "\n";
-            }
-            else
-            {
-                found++;
-                cout << "\n\t\t\tSuccessfully Deleted The Data"<<endl;
-            }
-            file >> name >> roll_no >> course >> email_id >> contact_no >> address;
-        }
-        if (found == 0)
-        {
-            cout << "\n\t\t\t Student Roll NO. Not Found...."<<endl;
-        }
-        file1.close();
-        file.close();
-        remove("FileManagement.txt");
-        rename("record.txt", "FileManagement.txt");
-    }
-}
-int main()
-{
-    student project;
-    project.menu();
-    return 0;
 }
